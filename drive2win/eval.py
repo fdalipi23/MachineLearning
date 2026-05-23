@@ -39,7 +39,10 @@ def run_policy(client, policy_fn: Callable, duration: float = 60.0,
     checkpoints_passed = 0
     crashes = 0
     last_pos = None
+<<<<<<< HEAD
     last_respawn = None
+=======
+>>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
     stuck_streak = 0
     max_stuck = 0
     track = []
@@ -63,6 +66,7 @@ def run_policy(client, policy_fn: Callable, duration: float = 60.0,
             max_stuck = max(max_stuck, stuck_streak)
             stuck_streak = 0
 
+<<<<<<< HEAD
         # crash detection — prefer the first-class respawn_count counter,
         # fall back to the position-teleport heuristic for older browser builds
         # that don't broadcast the counter yet.
@@ -73,6 +77,11 @@ def run_policy(client, policy_fn: Callable, duration: float = 60.0,
                 crashes += respawn - last_respawn
             last_respawn = respawn
         elif last_pos is not None and pos:
+=======
+        # position teleport detection (≈ crash + reset)
+        pos = state.get("position") or {}
+        if last_pos is not None and pos:
+>>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
             dx = pos.get("x", 0) - last_pos.get("x", 0)
             dz = pos.get("z", 0) - last_pos.get("z", 0)
             if (dx * dx + dz * dz) > 25.0:  # > 5 m in one frame
