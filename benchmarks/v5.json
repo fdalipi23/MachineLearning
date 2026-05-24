@@ -1,0 +1,29 @@
+{
+  "tag": "v5",
+  "weights": "nav_v5.npz",
+  "module": null,
+  "runs_per_seed": 1,
+  "duration_s": 5.0,
+  "seeds": [
+    {
+      "seed": 42,
+      "summary": {
+        "n_runs": 1,
+        "completion_rate": 0.0,
+        "median_lap_time": Infinity,
+        "mean_crashes": 0.0,
+        "max_checkpoints": 0
+      },
+      "runs": [
+        {
+          "steps": 0,
+          "elapsed": 5.023736238479614,
+          "checkpoints_passed": 0,
+          "crashes": 0,
+          "min_speed_streak": 0,
+          "track": []
+        }
+      ]
+    }
+  ]
+}

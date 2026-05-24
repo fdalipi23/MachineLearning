@@ -41,13 +41,10 @@ class GameClient:
         self._latest_state = None
         self._state_lock = threading.Lock()
         self._callbacks = {}
-<<<<<<< HEAD
         # Cached static world-map snapshot (terrain IDs, elevations, obstacles,
         # checkpoints). Populated by cache_world_map(); enables get_grid_local()
         # to compute the heading-aligned 32×32 grid offline at 20 Hz.
         self._world_map = None
-=======
->>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
 
         # Use a requests.Session for persistent headers
         self._http = requests.Session()
@@ -171,7 +168,6 @@ class GameClient:
         grid = np.array(data["grid"]["data"])  # (32, 32, 4)
         return grid.transpose(2, 0, 1)  # → (4, 32, 32) channels-first
 
-<<<<<<< HEAD
     def cache_world_map(self, force: bool = False) -> dict:
         """
         Download the static world-map snapshot for local grid computation.
@@ -315,8 +311,6 @@ class GameClient:
 
         return np.stack([ch0, ch1, ch2, ch3], axis=0)
 
-=======
->>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
     def get_sensor_history(self, count: int = 100) -> list:
         """
         Get recent sensor history (rolling buffer).
@@ -541,25 +535,18 @@ class GameClient:
 
     # ── Recording (Behavioral Cloning) ──────────────────────────────────
 
-<<<<<<< HEAD
     def start_recording(
         self, sample_rate: int = 20, include_grid: bool = False
     ) -> dict:
-=======
-    def start_recording(self, sample_rate: int = 20) -> dict:
->>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
         """
         Start recording (state, action) pairs for behavioral cloning.
 
         Args:
             sample_rate: Samples per second (default: 20)
-<<<<<<< HEAD
             include_grid: When True, also capture the 32x32x4 terrain grid per
                 sample. Useful for CNN training. Adds ~5 MB per minute of
                 recording at 20 Hz — fine over localhost; expect a slower
                 download for long captures.
-=======
->>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
 
         Returns:
             Confirmation dict
@@ -567,11 +554,7 @@ class GameClient:
         self._check_session()
         resp = self._http.post(
             f"{self.server_url}/api/session/{self.session_id}/recording/start",
-<<<<<<< HEAD
             json={"sample_rate": sample_rate, "include_grid": include_grid},
-=======
-            json={"sample_rate": sample_rate},
->>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
         )
         resp.raise_for_status()
         return resp.json()
@@ -626,7 +609,6 @@ class GameClient:
             actions.append(action_vec)
         return np.array(states, dtype=np.float32), np.array(actions, dtype=np.float32)
 
-<<<<<<< HEAD
     def get_recording_positions(self) -> np.ndarray:
         """
         Download the recorded agent positions as a numpy array.
@@ -649,7 +631,7 @@ class GameClient:
         Download a grid-enabled recording and return arrays for CNN training.
 
         Call `start_recording(..., include_grid=True)` first; without that
-        flag the per-sample grid will be missing and this method raises.
+         flag the per-sample grid will be missing and this method raises.
 
         Returns:
             (states, actions, grid_stack) where:
@@ -689,8 +671,6 @@ class GameClient:
             grid_stack,
         )
 
-=======
->>>>>>> 3ce6e615b6081f567cd14ab3c64c422361eb617c
     # ── Map & Exploration ───────────────────────────────────────────────
 
     def get_explored_map(self) -> dict:
