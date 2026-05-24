@@ -81,6 +81,8 @@ class GameClient:
         browser_url = data.get("browser_url", f"http://localhost:5173/?session={self.session_id}")
         print(f"Session created: {self.session_id} (mode: {mode})")
         print(f"Open this URL in your browser: {browser_url}")
+        import webbrowser
+        webbrowser.open(browser_url)
         return data
 
     def get_state(self) -> dict:
