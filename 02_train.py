@@ -92,7 +92,7 @@ def gradient_check():
 
 def inspect_dataset(states_raw, actions, tag: str):
     print("\nfeature ranges (raw):")
-    for i, name in enumerate(FEATURE_NAMES):
+    for i, name in enumerate(FEATURE_NAMES[:states_raw.shape[1]]):
         col = states_raw[:, i]
         print(f"  {name:>20s}: [{col.min():+7.2f}, {col.max():+7.2f}]   "
               f"mean={col.mean():+.2f}  std={col.std():.2f}")

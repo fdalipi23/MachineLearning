@@ -15,8 +15,8 @@ you've tried — the whole point of the first iteration is to write it.
 from __future__ import annotations
 import numpy as np
 
-H1, H2 = 64, 32
-N_IN, N_OUT = 12, 2
+H1, H2 = 128, 64
+N_IN, N_OUT = 14, 2
 
 
 # ── Forward pass ────────────────────────────────────────────────────────

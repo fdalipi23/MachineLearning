@@ -30,9 +30,11 @@ FEATURE_NAMES = [
     "ray_6_-90",
     "ray_7_-45",
     "ground_friction",
+    "ray_diff_front",
+    "ray_diff_side",
 ]
 ACTION_NAMES = ["throttle", "steering"]
-N_FEATURES = 12
+N_FEATURES = 14
 N_ACTIONS = 2
 
 
@@ -40,19 +42,34 @@ def normalize_states(states_raw: np.ndarray) -> np.ndarray:
     """Map raw sensor readings into roughly [-1, 1].
 
     Args:
-        states_raw: shape (N, 12). Columns in FEATURE_NAMES order.
+        states_raw: shape (N, 12) or (12,). Columns in raw sensor order.
 
     Returns:
-        float32 array of the same shape, scaled to [-1, 1] (or [0, 1] for
-        ranges that are physically non-negative).
+        float32 array of shape (N, 14) or (14,), scaled and engineered.
     """
-    s = np.asarray(states_raw, dtype=np.float32).copy()
-    s[:, 0] = np.clip(s[:, 0] / SPD_MAX, -1.0, 1.0)         # speed
-    s[:, 1] = np.clip(s[:, 1] / np.pi, -1.0, 1.0)           # heading_error
-    s[:, 2] = np.clip(s[:, 2] / DIST_MAX, 0.0, 1.0)         # ckpt distance
-    s[:, 3:11] = np.clip(s[:, 3:11] / RAY_MAX, 0.0, 1.0)    # 8 rays
-    # column 11 (friction) is already in [0, 1]
-    return s
+    s = np.asarray(states_raw, dtype=np.float32)
+    single = s.ndim == 1
+    if single:
+        s = s[None, :]
+
+    N = s.shape[0]
+    out = np.zeros((N, 14), dtype=np.float32)
+
+    out[:, 0] = np.clip(s[:, 0] / SPD_MAX, -1.0, 1.0)         # speed
+    out[:, 1] = np.clip(s[:, 1] / np.pi, -1.0, 1.0)           # heading_error
+    out[:, 2] = np.clip(s[:, 2] / DIST_MAX, 0.0, 1.0)         # ckpt distance
+
+    # 8 rays proximity: 1.0 (collision) to 0.0 (far away)
+    proximity = 1.0 - np.clip(s[:, 3:11] / RAY_MAX, 0.0, 1.0)
+    out[:, 3:11] = proximity
+
+    out[:, 11] = s[:, 11]                                     # ground_friction
+
+    # Engineered difference features
+    out[:, 12] = proximity[:, 1] - proximity[:, 7]            # ray_1_+45 - ray_7_-45 (front diff)
+    out[:, 13] = proximity[:, 2] - proximity[:, 6]            # ray_2_+90 - ray_6_-90 (side diff)
+
+    return out[0] if single else out
 
 
 def sensors_to_input(sensors: dict) -> np.ndarray:
