@@ -86,7 +86,7 @@ def main():
 
     stop_evt.set()
     info = client.stop_recording()
-    print(f"\nStopped. Samples on the server: {info.get('sample_count', '?')}")
+    print(f"\nStopped. Samples on the server: {info.get('total_samples') or info.get('sample_count', '?')}")
 
     states_raw, actions = client.get_recording_as_arrays()
     print(f"states shape   : {states_raw.shape}   (N, 12)")
