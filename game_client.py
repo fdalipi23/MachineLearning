@@ -20,6 +20,18 @@ import threading
 import numpy as np
 import requests
 import websocket
+import socket
+
+# DNS resolution patch for ml.ferit.tech (bypasses flaky local DNS)
+try:
+    _original_getaddrinfo = socket.getaddrinfo
+    def _patched_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+        if host == "ml.ferit.tech":
+            return _original_getaddrinfo("18.208.168.54", port, family, type, proto, flags)
+        return _original_getaddrinfo(host, port, family, type, proto, flags)
+    socket.getaddrinfo = _patched_getaddrinfo
+except Exception:
+    pass
 
 
 class GameClient:
