@@ -11,6 +11,12 @@ import time
 from typing import Callable
 import numpy as np
 
+try:
+    from websocket import WebSocketConnectionClosedException as _WsClosedErr
+except ImportError:
+    _WsClosedErr = OSError  # fallback: any socket error
+
+
 
 # ── Run a policy ─────────────────────────────────────────────────────────
 def run_policy(client, policy_fn: Callable, duration: float = 60.0,
@@ -81,7 +87,13 @@ def run_policy(client, policy_fn: Callable, duration: float = 60.0,
 
         # policy step
         throttle, steering = policy_fn(state)
-        client.send_control_ws(throttle, steering)
+        try:
+            client.send_control_ws(throttle, steering)
+        except _WsClosedErr:
+            # WebSocket dropped mid-run — end this run gracefully and let
+            # benchmark.py reconnect for the next one.
+            print("  [eval] WebSocket closed mid-run — ending run early.")
+            break
         steps += 1
         if on_step is not None:
             on_step(steps, state, (throttle, steering))
