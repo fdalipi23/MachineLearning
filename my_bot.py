@@ -5,8 +5,8 @@ policy = make_policy("nav_v19_clean.npz")
 
 bot = RoomBot(
     "https://ml.ferit.tech",
-    room="tournment",
-    name="FiorBot"
+    room="tournament7",
+    name="Fiorela"
 )
 
 standings = bot.run(policy, hz=20.0)
